@@ -1,0 +1,45 @@
+{
+  "name": "@bytescoutai/nextjs",
+  "version": "1.0.2",
+  "description": "Official ByteScout SDK for Next.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npx tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "nextjs",
+    "sdk",
+    "api",
+    "bytescout"
+  ],
+  "author": "ByteScout",
+  "license": "MIT",
+  "peerDependencies": {
+    "next": ">=13.0.0",
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "devDependencies": {
+    "@types/next": "^9.0.0",
+    "@types/node": "^22.5.5",
+    "@types/react": "^18.3.7",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.6.2"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/0xtotaylor/bytescout-nextjs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/0xtotaylor/bytescout-nextjs/issues"
+  },
+  "homepage": "https://github.com/0xtotaylor/bytescout-nextjs#readme"
+}

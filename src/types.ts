@@ -29,6 +29,11 @@ export interface AutoApiConfig {
    * @default 3600
    */
   cacheDuration?: number;
+  /**
+   * Username of the Skyfire receiver agent
+   * @default undefined
+   */
+  receiverUsername?: string;
 }
 
 export interface PageData {
@@ -52,4 +57,8 @@ export interface PageData {
    * Full HTML content of the page
    */
   html?: string;
+  /**
+   * Username of the Skyfire receiver agent
+   */
+  receiverUsername?: string;
 }

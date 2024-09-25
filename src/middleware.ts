@@ -19,6 +19,7 @@ export function withAutoApiMiddleware(config: AutoApiConfig = {}) {
     enableCache = false,
     cacheDuration = 3600,
     additionalHeaders = {},
+    receiverUsername,
   } = config;
 
   /**
@@ -46,7 +47,8 @@ export function withAutoApiMiddleware(config: AutoApiConfig = {}) {
           request,
           pagePath,
           enableCache,
-          cacheDuration
+          cacheDuration,
+          receiverUsername
         );
         if (pageData) {
           // Return page data as JSON response with additional headers
@@ -85,13 +87,15 @@ export function withAutoApiMiddleware(config: AutoApiConfig = {}) {
  * @param pagePath - The path of the page to fetch
  * @param enableCache - Whether caching is enabled
  * @param cacheDuration - Duration for which cache entries are valid
+ * @param receiverUsername - Optional username of the receiver
  * @returns Page data or null if not found
  */
 async function getPageData(
   request: NextRequest,
   pagePath: string,
   enableCache: boolean,
-  cacheDuration: number
+  cacheDuration: number,
+  receiverUsername?: string
 ): Promise<PageData | null> {
   // Check cache if enabled
   if (enableCache) {
@@ -100,7 +104,7 @@ async function getPageData(
       cachedData &&
       Date.now() - cachedData.timestamp < cacheDuration * 1000
     ) {
-      return cachedData.data;
+      return { ...cachedData.data, receiverUsername };
     }
   }
 
@@ -125,6 +129,7 @@ async function getPageData(
       title: extractTitle(htmlText),
       h1: extractH1(htmlText),
       html: htmlText,
+      receiverUsername,
     };
 
     // Cache the page data if caching is enabled

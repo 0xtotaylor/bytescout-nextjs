@@ -1,6 +1,6 @@
 # Official ByteScout SDK for Next.js
 
-This SDK provides an easy way to automatically generate API endpoints for your Next.js pages and optionally cache responses for improved performance.
+This SDK provides an easy way to automatically generate API endpoints for your Next.js pages and optionally cache responses for improved performance. It also includes support for specifying a Skyfire receiver username for potential integration with Skyfire payments.
 
 ## Installation
 
@@ -31,6 +31,7 @@ const autoApiConfig = {
   excludePaths: ["/private"],
   enableCache: true,
   cacheDuration: 3600,
+  receiverUsername: "your-skyfire-username", // Add this line for Skyfire monetization
 };
 
 export default withAutoApi(nextConfig, autoApiConfig);
@@ -49,6 +50,7 @@ const autoApiConfig: AutoApiConfig = {
   excludePaths: ["/private"],
   enableCache: true,
   cacheDuration: 3600,
+  receiverUsername: "your-skyfire-username", // Add this line for Skyfire monetization
 };
 
 export default withAutoApiMiddleware(autoApiConfig);
@@ -63,6 +65,7 @@ export const config = {
 - The SDK automatically generates API endpoints for your Next.js pages.
 - Access page data by appending your `apiPrefix` to the page path (e.g., `/api/public` for `/public/page.ts`).
 - Responses can be cached for improved performance.
+- If specified, the Skyfire receiver username is included in the API responses.
 
 ## Configuration Options
 
@@ -74,6 +77,19 @@ export const config = {
 | `enableCache`       | boolean  | `false`  | Enable or disable caching of API responses              |
 | `cacheDuration`     | number   | `3600`   | Duration (in seconds) for which cache entries are valid |
 | `additionalHeaders` | object   | `{}`     | Additional headers to include in the API response       |
+| `receiverUsername`  | string   | ``       | Username of the Skyfire receiver agent                  |
+
+## Skyfire Integration
+
+The SDK includes support for specifying a Skyfire receiver username. This username is included in the API responses and can be used as an identifier for potential Skyfire payment integrations.
+
+To use this feature:
+
+1. Set the `receiverUsername` in your `autoApiConfig`.
+2. The username will be included in the `PageData` object returned by API requests.
+3. You can use this username in your custom payment processing logic to identify the Skyfire receiver.
+
+Note: The SDK does not implement Skyfire payment processing directly. You will need to implement your own payment logic using the provided `receiverUsername`.
 
 ## Support
 

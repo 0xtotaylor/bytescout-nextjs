@@ -1,6 +1,6 @@
-# Official ByteScout SDK for Next.js
+# ByteScout SDK for Next.js
 
-This SDK provides an easy way to automatically generate API endpoints for your Next.js pages and optionally cache responses for improved performance. It also includes support for specifying a Skyfire receiver username for potential integration with Skyfire payments.
+This open source SDK provides an easy way to automatically generate API endpoints for your Next.js pages and optionally cache responses for improved performance. It also includes support for specifying a Skyfire receiver username for potential integration with Skyfire payments.
 
 ## Installation
 

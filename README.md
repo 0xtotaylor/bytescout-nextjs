@@ -2,6 +2,8 @@
 
 This open source SDK provides an easy way to automatically generate API endpoints for your Next.js pages and optionally cache responses for improved performance. It also includes support for specifying a Skyfire receiver username for potential integration with Skyfire payments.
 
+## [Demo](https://app.arcade.software/share/ariuGPfDPIHsulYO3slV)
+
 ## Installation
 
 1. Install the SDK in your Next.js project:

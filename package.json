@@ -1,5 +1,5 @@
 {
-  "name": "@bytescoutai/nextjs",
+  "name": "@0xtotaylor/bytescout-nextjs",
   "version": "1.0.5",
   "description": "ByteScout SDK for Next.js",
   "main": "dist/index.js",
@@ -37,6 +37,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/0xtotaylor/bytescout-nextjs.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "bugs": {
     "url": "https://github.com/0xtotaylor/bytescout-nextjs/issues"

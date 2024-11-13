@@ -38,6 +38,9 @@
     "type": "git",
     "url": "https://github.com/0xtotaylor/bytescout-nextjs.git"
   },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "bugs": {
     "url": "https://github.com/0xtotaylor/bytescout-nextjs/issues"
   },

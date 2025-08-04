@@ -1,27 +1,41 @@
 # ByteScout SDK for Next.js
 
-This open source SDK provides an easy way to automatically generate API endpoints for your Next.js pages and optionally cache responses for improved performance. It also includes support for specifying a Skyfire receiver username for potential integration with Skyfire payments.
+![npm version](https://img.shields.io/npm/v/@0xtotaylor/bytescout-nextjs)
+![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.6.2-blue)
 
-## [Demo](https://app.arcade.software/share/ariuGPfDPIHsulYO3slV)
+A robust, production-ready SDK that automatically generates API endpoints for your Next.js pages with intelligent caching, comprehensive error handling, and optional Skyfire integration. Perfect for creating headless CMS solutions, API-first architectures, and monetized content platforms.
 
-## Installation
+## ✨ Features
 
-1. Install the SDK in your Next.js project:
+- 🚀 **Zero Configuration**: Automatic API endpoint generation for all Next.js pages
+- ⚡ **Intelligent Caching**: Built-in memory cache with size limits and TTL
+- 🛡️ **Security First**: Input validation, path sanitization, and XSS protection
+- 📊 **Rich Metadata**: Extracts titles, headings, meta descriptions, and full HTML
+- 🎯 **TypeScript Native**: Full type safety with comprehensive interfaces
+- 🔍 **Robust HTML Parsing**: Powered by Cheerio for reliable content extraction
+- ⏱️ **Request Timeouts**: Configurable timeouts prevent hanging requests
+- 💰 **Skyfire Ready**: Built-in support for monetization platforms
+- 🧪 **Testing Friendly**: Cache utilities and statistics for monitoring
+
+## 📦 Installation
 
 ```bash
-npm install @bytescoutai/nextjs
+npm install @0xtotaylor/bytescout-nextjs
 # or
-yarn add @bytescoutai/nextjs
+yarn add @0xtotaylor/bytescout-nextjs
+# or
+pnpm add @0xtotaylor/bytescout-nextjs
 ```
 
-## Usage
+## 🚀 Quick Start
 
 ### 1. Configure Next.js
 
-Modify your `next.config.js` or `next.config.ts` file to use the `withAutoApi` function:
+Add the ByteScout SDK to your `next.config.js` or `next.config.ts`:
 
-```javascript
-import { withAutoApi } from "@bytescoutai/nextjs";
+```typescript
+import { withAutoApi } from "@0xtotaylor/bytescout-nextjs";
 
 const nextConfig = {
   // Your existing Next.js configuration
@@ -30,10 +44,10 @@ const nextConfig = {
 const autoApiConfig = {
   enabled: true,
   apiPrefix: "/api",
-  excludePaths: ["/private"],
   enableCache: true,
-  cacheDuration: 3600,
-  receiverUsername: "your-skyfire-username", // Add this line for Skyfire monetization
+  cacheDuration: 3600, // 1 hour
+  maxCacheSize: 100,
+  requestTimeout: 10000, // 10 seconds
 };
 
 export default withAutoApi(nextConfig, autoApiConfig);
@@ -41,62 +55,200 @@ export default withAutoApi(nextConfig, autoApiConfig);
 
 ### 2. Set up Middleware
 
-Create or modify `middleware.ts` in the root of your project:
+Create `middleware.ts` in your project root:
 
 ```typescript
-import { AutoApiConfig, withAutoApiMiddleware } from "@bytescoutai/nextjs";
+import { createAutoApiMiddleware } from "@0xtotaylor/bytescout-nextjs";
 
-const autoApiConfig: AutoApiConfig = {
+// Option 1: Using the convenience function (recommended)
+export default createAutoApiMiddleware({
   enabled: true,
   apiPrefix: "/api",
-  excludePaths: ["/private"],
+  excludePaths: ["/admin", "/private/*"],
   enableCache: true,
-  cacheDuration: 3600,
-  receiverUsername: "your-skyfire-username", // Add this line for Skyfire monetization
-};
-
-export default withAutoApiMiddleware(autoApiConfig);
+  receiverUsername: "your-skyfire-username",
+});
 
 export const config = {
-  matcher: "/:path*",
+  matcher: "/((?!_next/static|_next/image|favicon.ico).*)",
 };
 ```
 
-## How It Works
+### 3. Start Using Your APIs
 
-- The SDK automatically generates API endpoints for your Next.js pages.
-- Access page data by appending your `apiPrefix` to the page path (e.g., `/api/public` for `/public/page.ts`).
-- Responses can be cached for improved performance.
-- If specified, the Skyfire receiver username is included in the API responses.
+Once configured, access any page as an API:
 
-## Configuration Options
+```bash
+# Page: /about → API: /api/about
+curl http://localhost:3000/api/about
 
-| Option              | Type     | Default  | Description                                             |
-| ------------------- | -------- | -------- | ------------------------------------------------------- |
-| `enabled`           | boolean  | `true`   | Enable or disable the Auto API functionality            |
-| `apiPrefix`         | string   | `"/api"` | Prefix for the API endpoints                            |
-| `excludePaths`      | string[] | `[]`     | Paths to exclude from Auto API processing               |
-| `enableCache`       | boolean  | `false`  | Enable or disable caching of API responses              |
-| `cacheDuration`     | number   | `3600`   | Duration (in seconds) for which cache entries are valid |
-| `additionalHeaders` | object   | `{}`     | Additional headers to include in the API response       |
-| `receiverUsername`  | string   | ``       | Username of the Skyfire receiver agent                  |
+# Page: /blog/my-post → API: /api/blog/my-post  
+curl http://localhost:3000/api/blog/my-post
+```
 
-## Skyfire Integration
+**Example Response:**
+```json
+{
+  "path": "/about",
+  "timestamp": "2024-01-15T10:30:00.000Z",
+  "title": "About Us - My Company",
+  "h1": "About Our Company",
+  "metaDescription": "Learn more about our company history and mission",
+  "headings": ["About Our Company", "Our Mission", "Our Team"],
+  "contentLength": 1024,
+  "receiverUsername": "your-skyfire-username",
+  "html": "<!DOCTYPE html>..."
+}
+```
 
-The SDK includes support for specifying a Skyfire receiver username. This username is included in the API responses and can be used as an identifier for potential Skyfire payment integrations.
+## ⚙️ Configuration Options
 
-To use this feature:
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `enabled` | `boolean` | `true` | Enable/disable the Auto API functionality |
+| `apiPrefix` | `string` | `"/api"` | URL prefix for generated API endpoints |
+| `excludePaths` | `string[]` | `[]` | Paths to exclude (supports wildcards like `/admin/*`) |
+| `enableCache` | `boolean` | `false` | Enable intelligent response caching |
+| `cacheDuration` | `number` | `3600` | Cache TTL in seconds |
+| `maxCacheSize` | `number` | `100` | Maximum number of cached entries |
+| `requestTimeout` | `number` | `30000` | Request timeout in milliseconds |
+| `additionalHeaders` | `Record<string, string>` | `{}` | Custom headers to include in responses |
+| `receiverUsername` | `string` | `undefined` | Skyfire receiver username for monetization |
 
-1. Set the `receiverUsername` in your `autoApiConfig`.
-2. The username will be included in the `PageData` object returned by API requests.
-3. You can use this username in your custom payment processing logic to identify the Skyfire receiver.
+## 🎯 Advanced Usage
 
-Note: The SDK does not implement Skyfire payment processing directly. You will need to implement your own payment logic using the provided `receiverUsername`.
+### Cache Management
 
-## Support
+```typescript
+import { clearCache, getCacheStatistics } from "@0xtotaylor/bytescout-nextjs";
 
-For issues, feature requests, or questions, please [open an issue](https://github.com/0xtotaylor/bytescout-nextjs/issues) on our GitHub repository.
+// Clear all cached data
+clearCache();
 
-## License
+// Get cache statistics
+const stats = getCacheStatistics();
+console.log(`Cache size: ${stats.size}/${stats.maxSize}`);
+console.log(`Hit rate: ${stats.hitRate}%`);
+```
+
+### Error Handling
+
+The SDK provides comprehensive error handling with custom error types:
+
+```typescript
+import { AutoApiError, AutoApiErrorType } from "@0xtotaylor/bytescout-nextjs";
+
+try {
+  // Your API logic
+} catch (error) {
+  if (error instanceof AutoApiError) {
+    switch (error.type) {
+      case AutoApiErrorType.INVALID_CONFIG:
+        console.error("Configuration error:", error.message);
+        break;
+      case AutoApiErrorType.FETCH_ERROR:
+        console.error("Failed to fetch page:", error.message);
+        break;
+      case AutoApiErrorType.PARSE_ERROR:
+        console.error("Failed to parse HTML:", error.message);
+        break;
+    }
+  }
+}
+```
+
+### Custom Middleware Setup
+
+For advanced use cases, you can create custom middleware:
+
+```typescript
+import { withAutoApiMiddleware } from "@0xtotaylor/bytescout-nextjs";
+
+export default withAutoApiMiddleware({
+  enabled: process.env.NODE_ENV !== "development",
+  apiPrefix: "/v1/pages",
+  excludePaths: ["/admin/*", "/api/*", "/_next/*"],
+  enableCache: true,
+  cacheDuration: 1800, // 30 minutes
+  maxCacheSize: 500,
+  requestTimeout: 15000,
+  additionalHeaders: {
+    "X-API-Version": "1.0",
+    "Cache-Control": "public, max-age=300",
+  },
+  receiverUsername: process.env.SKYFIRE_USERNAME,
+});
+```
+
+## 💰 Skyfire Integration
+
+ByteScout SDK includes built-in support for Skyfire monetization:
+
+```typescript
+const config = {
+  receiverUsername: "your-skyfire-username",
+  // ... other options
+};
+```
+
+The `receiverUsername` is included in all API responses and can be used for:
+- Content monetization
+- Pay-per-view APIs  
+- Usage tracking
+- Revenue attribution
+
+## 🔧 Development
+
+### Building the Project
+
+```bash
+npm run build
+```
+
+### Running Tests
+
+```bash
+npm test
+```
+
+### Publishing
+
+```bash
+npm run prepublishOnly
+npm publish
+```
+
+## 📊 Use Cases
+
+- **Headless CMS**: Convert your Next.js site into a headless content management system
+- **API-First Architecture**: Automatically expose page content via REST APIs
+- **Content Monetization**: Integrate with Skyfire for pay-per-access content
+- **Mobile Apps**: Feed page content to mobile applications
+- **SEO Tools**: Extract metadata and content for SEO analysis
+- **Content Syndication**: Share page content across multiple platforms
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+- 📖 [Documentation](https://github.com/0xtotaylor/bytescout-nextjs#readme)
+- 🐛 [Issue Tracker](https://github.com/0xtotaylor/bytescout-nextjs/issues)
+- 💬 [Discussions](https://github.com/0xtotaylor/bytescout-nextjs/discussions)
+
+## 🙏 Acknowledgments
+
+- Built with [Next.js](https://nextjs.org/) and [TypeScript](https://www.typescriptlang.org/)
+- HTML parsing powered by [Cheerio](https://cheerio.js.org/)
+- Inspired by the need for simple, powerful API generation tools
